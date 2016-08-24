@@ -4,7 +4,7 @@ var rollCount = 0;
 var turn = 0;
 var gameOver = false;
 var totalPlayers = [];
-var robotNames =['Spade','DeathGrip','KillaClone','CompSlayer','System32','MaulWare','BioSphere','Lizard','TrojanMule','VampireWalrus'];
+var robotNames =['Spade','DeathGrip','KillaClone','CompSlayer','System32','MaulWare','BioSphere','Lizard','TrojanMule','VampireWalrus','ERROR 404',"Blade","Blazer","Lazer"];
 
 function Player (name) {
   this.name = name;
@@ -35,9 +35,7 @@ var easyRoll = function()
   if(roboRoll1 == 1 || roboRoll2 == 1)
   {
     currentpoints = 0;
-
     updateScore();
-
   }
   else
   {
@@ -82,7 +80,7 @@ var updateScore = function(){
 
 var isGameOver =function(){
   for(var i =0; i<totalPlayers.length;i++){
-    if(totalPlayers[i].totalPoints>=50){
+    if(totalPlayers[i].totalPoints>=100){
       gameOver=true;
       turn=i;
       break;
@@ -113,9 +111,10 @@ $(document).ready(function() {
   }
 
   var outputShow = function () {
-    $("#turn-player").text(totalPlayers[turn].name);
+
     $("#output").empty();
     totalPlayers.forEach(function(player){
+      $("#turn-player").text(totalPlayers[turn].name);
       $("#output").append("<li><span id='players'>" + player.name +": " +"</span>"+player.totalPoints + "</li>");
     });
   }
@@ -151,10 +150,13 @@ $(document).ready(function() {
       {
         easyRoll();
         outputShow();
+      //   $("#current").hide(); //hide the current roll view during play
       }
       else
       {
         addRoll(rollCount);
+        outputShow();
+         //$("#current").show(); //hide the current roll during
       }
 
       $("#current-roll").text(rollCount);
@@ -162,6 +164,11 @@ $(document).ready(function() {
       $("#turn-total").text(currentpoints);
   });
   $("button#hold").click(function(){
+    // if(totalPlayers[turn].isRobot){
+    //   $("#current").hide(); //hide the current roll view during play
+    // }else{
+    //   $("#current").show(); //hide the current roll during
+    // }
 
     $("#output").empty();
     if(currentpoints !==0){
