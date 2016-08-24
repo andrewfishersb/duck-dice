@@ -4,6 +4,7 @@ var rollCount = 0;
 var turn = 0;
 var gameOver = false;
 var totalPlayers = [];
+var robotNames =['Spade','DeathGrip','KillaClone','CompSlayer','System32','MaulWare','BioSphere','Lizard','TrojanMule','VampireWalrus'];
 
 function Player (name) {
   this.name = name;
@@ -12,6 +13,8 @@ function Player (name) {
 }
 
 function Robot () {
+  var nameSelector =Math.floor(Math.random()*10);
+  this.name = robotNames[nameSelector];
   this.totalPoints = 0;
   this.isRobot = true;
 }
@@ -21,27 +24,27 @@ var roll = function(){
     return Math.floor(Math.random()*6)+1;
   }
 }
-var easyRoll = function(){
-  var roboRoll= roll();
-  addRoll(roboRoll);
-  console.log("robo-roll "+roboRoll);
-  console.log("turn "+turn);
-  if(roboRoll>1)
-  {
 
-    var secondRoll = roll();
-    addRoll(secondRoll);
-    console.log("second-roll " + secondRoll);
-    console.log("turn "+turn);
+var easyRoll = function()
+{
+  var roboRoll1 = roll();
+  var roboRoll2 = roll();
+  console.log("roboroll!")
+  console.log("roboroll1 " + roboRoll1)
+  console.log("roboroll2 " + roboRoll2)
+  if(roboRoll1 == 1 || roboRoll2 == 1)
+  {
+    currentpoints = 0;
+
     updateScore();
-    if(secondRoll===1){
-      turn--;
-    }
-  }else{
 
   }
+  else
+  {
+    currentpoints = roboRoll1 + roboRoll2;
 
-  console.log("turn "+turn);
+    updateScore();
+  }
 }
 
 
@@ -49,7 +52,7 @@ var easyRoll = function(){
 var addRoll = function(roll){
   if(gameOver === false)
   {
-    if(roll === 1)
+    if(roll == 1)
     {
       if(turn >= (totalPlayers.length - 1)){
         turn = 0;
@@ -78,7 +81,7 @@ var updateScore = function(){
 }
 
 var isGameOver =function(){
-  for(var i =0; i<totalPlayers.length-1;i++){
+  for(var i =0; i<totalPlayers.length;i++){
     if(totalPlayers[i].totalPoints>=50){
       gameOver=true;
       turn=i;
@@ -109,6 +112,14 @@ $(document).ready(function() {
     });
   }
 
+  var outputShow = function () {
+    $("#turn-player").text(totalPlayers[turn].name);
+    $("#output").empty();
+    totalPlayers.forEach(function(player){
+      $("#output").append("<li><span id='players'>" + player.name +": " +"</span>"+player.totalPoints + "</li>");
+    });
+  }
+
   $("button#add").click(function(){
     var player = new Player($("#name").val());
     if(totalPlayers.length < 5)
@@ -135,24 +146,30 @@ $(document).ready(function() {
 
   console.log(totalPlayers);
   $("button#roll").click(function() {
-    console.log(totalPlayers[turn].isRobot)
-      if (totalPlayers[turn].isRobot)
+      rollCount = roll();
+      if(totalPlayers[turn].isRobot)
       {
         easyRoll();
-      }else{
-        rollCount = roll();
+        outputShow();
+      }
+      else
+      {
         addRoll(rollCount);
       }
+
       $("#current-roll").text(rollCount);
-      console.log(currentpoints);
+      console.log(currentpoints)
       $("#turn-total").text(currentpoints);
   });
   $("button#hold").click(function(){
+
     $("#output").empty();
-    updateScore();
-    totalPlayers.forEach(function(player){
-      $("#output").append("<li>" + player.totalPoints + "</li>");
-    });
+    if(currentpoints !==0){
+      updateScore();
+    }
+
+    outputShow();
+    //$("#turn-player").text(totalPlayers[turn].name);
     isGameOver();
     if(gameOver)
     {
@@ -171,3 +188,14 @@ $(document).ready(function() {
 
 
 });
+
+
+
+// $("button#roll").mousedown(function(){
+//   if (totalPlayers[turn].isRobot)
+//   {
+//     easyRoll();
+//   }//else{
+//     rollCount = roll();
+//     addRoll(rollCount);
+//   }
