@@ -1,10 +1,9 @@
 //Backend
 var currentpoints = 0;
 var rollCount = 0;
-var turn = 1;
+var turn = 0;
 var gameOver = false;
-var playerOne = new Player(1);
-var playerTwo = new Player(2);
+var totalPlayers = [];
 
 function Player (name) {
   this.name = name;
@@ -22,12 +21,11 @@ var addRoll = function(roll){
   {
     if(roll === 1)
     {
-      if(turn === 1){
-      turn = 2;
+      if(turn >= (totalPlayers.length - 1)){
+        turn = 0;
       }
-      else if(turn === 2)
-      {
-      turn =1;
+      else{
+        turn ++;
       }
       currentpoints = 0;
     }
@@ -38,34 +36,31 @@ var addRoll = function(roll){
 }
 
 var updateScore = function(){
-  if(turn===1){
-    playerOne.totalPoints +=currentpoints;
-    turn =2;
-  }else{
-    playerTwo.totalPoints +=currentpoints;
-    turn =1;
-  }
-  currentpoints=0;
+  console.log(totalPlayers[turn].name);
+    totalPlayers[turn].totalPoints +=currentpoints;
+    if(turn >= (totalPlayers.length - 1)){
+      turn = 0;
+    }
+    else{
+      turn ++;
+    }
+    currentpoints=0;
 }
 
-var isGameOver =function(playerOnePoints,playerTwoPoints){
-  playerOnePoints = playerOne.totalPoints;
-  playerTwoPoints = playerTwo.totalPoints;
-
-  if(playerOnePoints>=10){
-    gameOver=true;
-    console.log(gameOver);
-    turn =1;
-  }else if(playerTwoPoints>=10){
-    gameOver =true;
-    console.log(gameOver);
-    turn = 2;
+var isGameOver =function(){
+  for(var i =0; i<totalPlayers.length-1;i++){
+    if(totalPlayers[i].totalPoints>=10){
+      gameOver=true;
+      turn=i;
+      break;
+    }
   }
 }
 
 var resetGame= function(){
-  playerOne.totalPoints =0;
-  playerTwo.totalPoints =0;
+  totalPlayers.forEach(function(player){
+    player.totalPoints =0;
+  });
   currentpoints =0;
   rollCount=0;
   gameOver = false;
@@ -76,13 +71,23 @@ var resetGame= function(){
 $(document).ready(function() {
   var resetInterface = function(){
     resetGame();
+    $("#output").empty();
     $("#current-roll").text(rollCount);
     $("#turn-total").text(currentpoints);
-    $("#output1").text(playerOne.totalPoints);
-    $("#output2").text(playerTwo.totalPoints);
-
+    totalPlayers.forEach(function(player){
+      $("#output").append("<li>" + player.totalPoints + "</li>");
+    });
   }
 
+  $("button#add").click(function(){
+    var player = new Player($("#name").val());
+    if(totalPlayers.length < 5)
+    {
+      totalPlayers.push(player);
+    }
+    $("#name").val("");
+  });
+  console.log(totalPlayers);
   $("button#roll").click(function() {
     rollCount = roll();
     addRoll(rollCount);
@@ -91,13 +96,15 @@ $(document).ready(function() {
 
   });
   $("button#hold").click(function(){
+    $("#output").empty();
     updateScore();
-    $("#output1").text(playerOne.totalPoints);
-    $("#output2").text(playerTwo.totalPoints);
-    isGameOver(playerOne.totalPoints,playerTwo.totalPoints);
+    totalPlayers.forEach(function(player){
+      $("#output").append("<li>" + player.totalPoints + "</li>");
+    });
+    isGameOver();
     if(gameOver)
     {
-      $("#player").text(turn);
+      $("#player").text(totalPlayers[turn].name);
       $(".game-over").show();
     }
   });

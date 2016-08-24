@@ -10,6 +10,12 @@
 
   <body>
     <div class="container">
+      <div id="setup">
+        <label>Add New Player</label>
+        <input type="text" class="form-control" id="name">
+        <button type="button" class="btn btn-info" id="add">Add Player</button>
+        <button type="button" class="btn btn-success" id="start">Start</button>
+      </div>
       <h3 id="current-roll"></h3>
       <h3 id="turn-total"></h3>
       <button type="button" class="btn btn-primary" id="roll">Roll!</button>
@@ -17,10 +23,7 @@
       <button type="button" class="btn btn-danger" id="rage">RAGE QUIT!!!!!</button>
 
 
-      <h3 id="output1">
-      </h3>
-      <h3 id="output2">
-      </h3>
+      <ul id="output"></ul>
       <h2 class="game-over">Player <span id="player"></span> Wins!</h2>
       <button type="button" class="btn btn-danger game-over">Reset</button>
     </div>
