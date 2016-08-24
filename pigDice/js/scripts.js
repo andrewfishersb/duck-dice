@@ -8,6 +8,12 @@ var totalPlayers = [];
 function Player (name) {
   this.name = name;
   this.totalPoints = 0;
+  this.isRobot = false;
+}
+
+function Robot () {
+  this.totalPoints = 0;
+  this.isRobot = true;
 }
 
 var roll = function(){
@@ -15,6 +21,30 @@ var roll = function(){
     return Math.floor(Math.random()*6)+1;
   }
 }
+var easyRoll = function(){
+  var roboRoll= roll();
+  addRoll(roboRoll);
+  console.log("robo-roll "+roboRoll);
+  console.log("turn "+turn);
+  if(roboRoll>1)
+  {
+
+    var secondRoll = roll();
+    addRoll(secondRoll);
+    console.log("second-roll " + secondRoll);
+    console.log("turn "+turn);
+    updateScore();
+    if(secondRoll===1){
+      turn--;
+    }
+  }else{
+
+  }
+
+  console.log("turn "+turn);
+}
+
+
 
 var addRoll = function(roll){
   if(gameOver === false)
@@ -49,7 +79,7 @@ var updateScore = function(){
 
 var isGameOver =function(){
   for(var i =0; i<totalPlayers.length-1;i++){
-    if(totalPlayers[i].totalPoints>=10){
+    if(totalPlayers[i].totalPoints>=50){
       gameOver=true;
       turn=i;
       break;
@@ -87,13 +117,35 @@ $(document).ready(function() {
     }
     $("#name").val("");
   });
+  $("button#robot-easy").click(function(){
+    var robot = new Robot();
+    if(totalPlayers.length < 5)
+    {
+      totalPlayers.push(robot);
+    }
+
+  });
+  $("button#robot-hard").click(function(){
+    var robot = new Robot();
+    if(totalPlayers.length < 5)
+    {
+      totalPlayers.push(robot);
+    }
+  });
+
   console.log(totalPlayers);
   $("button#roll").click(function() {
-    rollCount = roll();
-    addRoll(rollCount);
-    $("#current-roll").text(rollCount);
-    $("#turn-total").text(currentpoints);
-
+    console.log(totalPlayers[turn].isRobot)
+      if (totalPlayers[turn].isRobot)
+      {
+        easyRoll();
+      }else{
+        rollCount = roll();
+        addRoll(rollCount);
+      }
+      $("#current-roll").text(rollCount);
+      console.log(currentpoints);
+      $("#turn-total").text(currentpoints);
   });
   $("button#hold").click(function(){
     $("#output").empty();
