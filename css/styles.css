@@ -9,6 +9,14 @@ ul{
   display: none;
 }
 
+#hard{
+  color:red;
+}
+
+#easy{
+  color:green;
+}
+
 #rage{
   float: right;
 }
