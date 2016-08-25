@@ -30,13 +30,13 @@ var roll = function(){
       if(num>1){
         num *= 2.5;
       }
-      return num;
+      return Math.ceil(num);
     }else if(totalPlayers[turn].isBear){
       var num =(Math.floor(Math.random()*6)+1);
       if(num>1){
         num *= .5;
       }
-      return num;
+      return Math.floor(num);
     }else{
       return Math.floor(Math.random()*6)+1;
     }
@@ -45,6 +45,9 @@ var roll = function(){
 var hardRoll = function()
 {
   var holdCondition =20;
+  if(totalPlayers[turn].points >= 90){
+    holdCondition = 5;
+  }
   for(var i = 0; i < totalPlayers.length; i ++)
   {
     if(totalPlayers[i].totalPoints - totalPlayers[turn].totalPoints > 30 )
@@ -206,6 +209,8 @@ $(document).ready(function() {
 
   $("button#add").click(function(){
     var player = new Player($("#name").val());
+    var firstLetter = (player.name).charAt(0).toUpperCase();
+    player.name = firstLetter + player.name.substring(1);
     if(totalPlayers.length < 5)
     {
       totalPlayers.push(player);
@@ -245,7 +250,6 @@ $(document).ready(function() {
 
   $("button#roll").click(function() {
       rollCount = roll();
-
       while(totalPlayers[turn].isRobot)
       {
         if(totalPlayers[turn].isHard){
@@ -272,7 +276,12 @@ $(document).ready(function() {
         showFinish();
       }
       if(rollCount===1){
+        $("#fail").empty();
+        $("#fail").show();
+        $("#fail").text("You just rolled a one!");
         rollCount=0;
+      }else{
+        $("#fail").fadeOut();
       }
       $("#current-roll").text(rollCount);
       $("#turn-total").text(currentpoints);

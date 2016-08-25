@@ -5,7 +5,10 @@ body{
 }
 
 button{
-  margin-top: 1%
+  height: 50px;
+  width: 150px;
+
+  margin-top: 1%;
 }
 
 ul{
@@ -17,6 +20,9 @@ li{
 img{
   border-radius: 50px;
 }
+label{
+  font-size: 15px;
+}
 .jumbotron{
   background-color: pink;
   box-shadow: 5px 10px 10px 10px black;
@@ -26,6 +32,20 @@ img{
 {
   display: none;
   text-align: center;
+}
+
+#fail{
+  float:right;
+  margin-right: 100px;
+}
+
+#rules li{
+  list-style: circle;
+  font-size: 20px;
+}
+
+p{
+font-size: 20px;
 }
 #reset{
   text-align: center;
@@ -61,4 +81,16 @@ img{
   color: gold;
   font-size: 35px;
   text-shadow: 2px 2px  black;
+}
+
+/*Media Query*/
+@media only screen and (max-width: 480px){
+  #rules{
+    display: none;
+  }
+}
+@media only screen and (max-width: 480px){
+  #rage{
+    float: left;
+  }
 }

@@ -20,19 +20,39 @@
         <button type="button" class="btn btn-info" id="add">Add Player</button>
         <button type="button" class="btn btn-info" id="robot-easy">Add Easy Robot</button>
         <button type="button" class="btn btn-info" id="robot-hard">Add Hard Robot</button>
+        <button type="button" class="btn btn-danger" id="rage">RAGE QUIT!!!!!</button>
       </div>
-      <h3>Turn: <span id="turn-player"></script></h3>
-      <div id="current">
-        <h3>Current Roll: <span id="current-roll"></span></h3>
-        <h3>Total Pot: <span id="turn-total"></span></h3>
+      <div class="row">
+        <div class="col-md-7">
+          <h3>Turn: <span id="turn-player"></script></h3>
+          <div id="current">
+            <h3>Current Roll: <span id="current-roll"></span></h3>
+            <h3>Total Pot: <span id="turn-total"></span></h3>
+            <h3><span id="fail"></span></h3>
+          </div>
+
+          <button type="button" class="btn btn-primary" id="roll">Roll!</button>
+          <button type="button" class="btn btn-warning" id="hold">Hold!</button>
+          <ul id="output"></ul>
+        </div>
+        <div id="rules" class="col-md-5">
+          <h3>The Rules of Duck Dice</h3>
+          <p>
+            Each turn, a player repeatedly rolls a die until either a 1 is rolled or the player decides to "hold":
+          </p>
+          <ul >
+            <li>If the player rolls a 1, they score nothing and it becomes the next player's turn.</li>
+            <li>If the player rolls any other number, it is added to their turn total and the player's turn continues.</li>
+            <li>If a player chooses to "hold", their turn total is added to their score, and it becomes the next player's turn.</li>
+          </ul>
+          <p>
+              The first player to score 100 or more points wins.
+          </p>
+        </div>
+
       </div>
 
-      <button type="button" class="btn btn-primary" id="roll">Roll!</button>
-      <button type="button" class="btn btn-warning" id="hold">Hold!</button>
-      <button type="button" class="btn btn-danger" id="rage">RAGE QUIT!!!!!</button>
 
-
-      <ul id="output"></ul>
       <div class="row">
         <div class="game-over col-md-6">
           <h2><span id="player"></span> Wins!</h2>
