@@ -1,3 +1,9 @@
+body{
+  font-family: 'Baloo Chettan', cursive;
+  background-color:  #ccffff;
+
+}
+
 button{
   margin-top: 1%
 }
@@ -5,7 +11,17 @@ button{
 ul{
   list-style: none;
 }
+li{
+  font-size: 30px;
+}
+img{
+  border-radius: 50px;
+}
+.jumbotron{
+  background-color: pink;
+  box-shadow: 5px 10px 10px 10px black;
 
+}
 .game-over
 {
   display: none;
@@ -15,15 +31,34 @@ ul{
   text-align: center;
 }
 
-
+#players{
+  color:  #808080;
+  font-size: 30px;
+  text-shadow: 2px 2px black;
+}
 #hard{
   color:red;
+  text-shadow: 2px 2px  black;
+  font-size: 30px;
 }
 
 #easy{
   color:green;
+  text-shadow: 2px 2px  black;
+  font-size: 30px;
 }
 
 #rage{
   float: right;
+}
+
+#bear{
+  color: blue;
+  text-shadow: 2px 2px  black;
+  font-size: 35px;
+}
+#duck{
+  color: gold;
+  font-size: 35px;
+  text-shadow: 2px 2px  black;
 }

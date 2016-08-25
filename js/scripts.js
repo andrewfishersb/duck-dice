@@ -4,7 +4,7 @@ var rollCount = 0;
 var turn = 0;
 var gameOver = false;
 var totalPlayers = [];
-var robotNames =['Spade','DeathGrip','KillaClone','CompSlayer','System32','MaulWare','BioSphere','Lizard','TrojanMule','VampireWalrus','ERROR 404',"Blade","Blazer","Lazer", "DragonFace", "Porky", "DiscoDuck", "Mike Tyson", "GitSum!","Spark","GageRage",'Das Boot','CyberneticSimon', 'Das BoT', "Nerf Me", "RAM Job"];
+var robotNames =['Spade','DeathGrip','KillaClone','CompSlayer','System32','MaulWare','BioSphere','Lizard','TrojanMule','VampireWalrus','ERROR 404',"PassivePolarBear","Blade","Blazer","Lazer", "DragonFace", "Porky", "DiscoDuck", "Mike Tyson", "GitSum!","Spark","GageRage",'Das Boot','CyberneticSimon', 'Das BoT', "Nerf Me", "RAM Job"];
 
 function Player (name) {
   this.name = name;
@@ -19,21 +19,32 @@ function Robot () {
   this.totalPoints = 0;
   this.isRobot = true;
   this.isHard = false;
+  this.isDuck = false;
+  this.isBear = false;
 }
 
 var roll = function(){
   if(gameOver===false){
-    return Math.floor(Math.random()*6)+1;
+    if(totalPlayers[turn].isDuck){
+      var num =(Math.floor(Math.random()*6)+1);
+      if(num>1){
+        num *= 2.5;
+      }
+      return num;
+    }else if(totalPlayers[turn].isBear){
+      var num =(Math.floor(Math.random()*6)+1);
+      if(num>1){
+        num *= .5;
+      }
+      return num;
+    }else{
+      return Math.floor(Math.random()*6)+1;
+    }
   }
 }
 var hardRoll = function()
 {
   var holdCondition =20;
-  //20 good earlier on
-  //after 50 hold on 15
-  //if far behind take risks
-  //hold on 35 behind by 30
-
   for(var i = 0; i < totalPlayers.length; i ++)
   {
     if(totalPlayers[i].totalPoints - totalPlayers[turn].totalPoints > 30 )
@@ -41,17 +52,13 @@ var hardRoll = function()
       holdCondition = 34;
     }
   }
-
   if(totalPlayers[turn].totalPoints >=50 && holdCondition < 34)
   {
     holdCondition = 17;
   }
-
-
   do
   {
     var roboRoll = roll();
-    console.log("Hard Roll: " +roboRoll);
     if(roboRoll === 1) {
       currentpoints = 0;
       break;
@@ -64,14 +71,10 @@ var hardRoll = function()
   updateScore();
 }
 
-
 var easyRoll = function()
 {
   var roboRoll1 = roll();
   var roboRoll2 = roll();
-  console.log("roboroll!")
-  console.log("roboroll1 " + roboRoll1)
-  console.log("roboroll2 " + roboRoll2)
   if(roboRoll1 == 1 || roboRoll2 == 1)
   {
     currentpoints = 0;
@@ -85,8 +88,6 @@ var easyRoll = function()
   }
 }
 
-
-
 var addRoll = function(roll){
   if(gameOver === false)
   {
@@ -94,6 +95,7 @@ var addRoll = function(roll){
     {
       if(turn >= (totalPlayers.length - 1)){
         turn = 0;
+        currentpoints = 0;
       }
       else{
         turn ++;
@@ -116,7 +118,6 @@ var addRoll = function(roll){
 }
 
 var updateScore = function(){
-  console.log(totalPlayers[turn].name);
     totalPlayers[turn].totalPoints +=currentpoints;
     if(turn >= (totalPlayers.length - 1)){
       turn = 0;
@@ -156,7 +157,6 @@ var resetGame= function(){
   currentpoints =0;
   rollCount=0;
   gameOver = false;
-
 }
 
 //Front End
@@ -167,9 +167,9 @@ $(document).ready(function() {
     $("#current-roll").text(rollCount);
     $("#turn-total").text(currentpoints);
     totalPlayers.forEach(function(player){
-      $("#output").append("<li>" + player.totalPoints + "</li>");
-      $("#roll").attr("disabled",false);
-      $("#hold").attr("disabled",false);
+    $("#output").append("<li>" + player.totalPoints + "</li>");
+    $("#roll").attr("disabled",false);
+    $("#hold").attr("disabled",false);
     });
   }
 
@@ -177,7 +177,11 @@ $(document).ready(function() {
     $("#output").empty();
     $("#turn-player").text(totalPlayers[turn].name);
     totalPlayers.forEach(function(player){
-      if(player.isHard)
+      if(player.isDuck){
+        $("#output").append("<li><span id='duck'>" + player.name +": " +"</span>"+player.totalPoints + "</li>");
+      }else if(player.isBear){
+        $("#output").append("<li><span id='bear'>" + player.name +": " +"</span>"+player.totalPoints + "</li>");
+      }else if(player.isHard)
       {
         $("#output").append("<li><span id='hard'>" + player.name +": " +"</span>"+player.totalPoints + "</li>");
       }
@@ -191,6 +195,14 @@ $(document).ready(function() {
 
     });
   }
+  var showFinish = function(){
+    var indexOfLoser = findLoser(totalPlayers);
+    $("#player").text(totalPlayers[turn].name);
+    $("#loser").text(totalPlayers[indexOfLoser].name);
+    $(".game-over").show();
+    $("#roll").attr("disabled",true);
+    $("#hold").attr("disabled",true);
+  }
 
   $("button#add").click(function(){
     var player = new Player($("#name").val());
@@ -199,27 +211,41 @@ $(document).ready(function() {
       totalPlayers.push(player);
     }
     $("#name").val("");
+    outputShow();
   });
   $("button#robot-easy").click(function(){
     var robot = new Robot();
+    if(robot.name==='DiscoDuck'){
+      robot.isDuck = true;
+    }else if(robot.name === 'PassivePolarBear'){
+      robot.isBear = true;
+      console.log(robot.isBear);
+    }
     if(totalPlayers.length < 5)
     {
       totalPlayers.push(robot);
     }
-
+    outputShow();
   });
   $("button#robot-hard").click(function(){
     var robot = new Robot();
     robot.isHard =true;
+    if(robot.name==='DiscoDuck'){
+      robot.isDuck = true;
+    }else if(robot.name === 'PassivePolarBear'){
+      robot.isBear = true;
+      console.log(robot.isBear);
+    }
     if(totalPlayers.length < 5)
     {
       totalPlayers.push(robot);
     }
+    outputShow();
   });
 
-  console.log(totalPlayers);
   $("button#roll").click(function() {
       rollCount = roll();
+
       while(totalPlayers[turn].isRobot)
       {
         if(totalPlayers[turn].isHard){
@@ -231,49 +257,30 @@ $(document).ready(function() {
         isGameOver();
         if(gameOver)
         {
-
-          var indexOfLoser = findLoser(totalPlayers);
-          console.log("Loser: "+ indexOfLoser);
-          $("#player").text(totalPlayers[turn].name);
-          $("#loser").text(totalPlayers[indexOfLoser].name);
-          $(".game-over").show();
-          $("#roll").attr("disabled",true);
-          $("#hold").attr("disabled",true);
+          showFinish();
           break;
         }
-      //   $("#current").hide(); //hide the current roll view during play
       }
       if(!totalPlayers[turn].isRobot)
       {
         addRoll(rollCount);
         outputShow();
-         //$("#current").show(); //hide the current roll during
       }
       isGameOver();
       if(gameOver)
       {
-        var indexOfLoser = findLoser(totalPlayers);
-        console.log("Loser: "+ indexOfLoser);
-        $("#player").text(totalPlayers[turn].name);
-        $("#loser").text(totalPlayers[indexOfLoser].name);
-
-
-        $(".game-over").show();
-        $("#roll").attr("disabled",true);
-        $("#hold").attr("disabled",true);
+        showFinish();
+      }
+      if(rollCount===1){
+        rollCount=0;
       }
       $("#current-roll").text(rollCount);
-      console.log(currentpoints)
       $("#turn-total").text(currentpoints);
   });
   $("button#hold").click(function(){
-    // if(totalPlayers[turn].isRobot){
-    // $("#current").hide(); //hide the current roll view during play
-    // }else{
-    //   $("#current").show(); //hide the current roll during
-    // }
-
     $("#output").empty();
+    $("#current-roll").text("0");
+    $("#turn-total").text("0");
     if(currentpoints !==0){
       updateScore();
     }
@@ -284,39 +291,19 @@ $(document).ready(function() {
       }else{
         easyRoll();
       }
-
       outputShow();
-
       isGameOver();
       if(gameOver)
       {
-        var indexOfLoser = findLoser(totalPlayers);
-        console.log("Loser: "+ indexOfLoser);
-        $("#player").text(totalPlayers[turn].name);
-        $("#loser").text(totalPlayers[indexOfLoser].name);
-
-
-        $(".game-over").show();
-        $("#roll").attr("disabled",true);
-        $("#hold").attr("disabled",true);
+        showFinish();
         break;
       }
     }
-
     isGameOver();
     outputShow();
-    //$("#turn-player").text(totalPlayers[turn].name);
     if(gameOver)
     {
-      var indexOfLoser = findLoser(totalPlayers);
-      console.log("Loser: "+ indexOfLoser);
-      $("#player").text(totalPlayers[turn].name);
-      $("#loser").text(totalPlayers[indexOfLoser].name);
-
-
-      $(".game-over").show();
-      $("#roll").attr("disabled",true);
-      $("#hold").attr("disabled",true);
+      showFinish();
     }
   });
   $("button.game-over").click(function(){
@@ -326,7 +313,4 @@ $(document).ready(function() {
   $("button#rage").click(function(){
     resetInterface();
   });
-
-
-
 });
