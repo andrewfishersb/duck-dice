@@ -13,8 +13,9 @@ function Player (name) {
 }
 
 function Robot () {
-  var nameSelector =Math.floor(Math.random()*26);
+  var nameSelector =Math.floor(Math.random()*robotNames.length);
   this.name = robotNames[nameSelector];
+  robotNames.splice(nameSelector,1);
   this.totalPoints = 0;
   this.isRobot = true;
   this.isHard = false;
@@ -27,7 +28,26 @@ var roll = function(){
 }
 var hardRoll = function()
 {
-  // debugger;
+  var holdCondition =20;
+  //20 good earlier on
+  //after 50 hold on 15
+  //if far behind take risks
+  //hold on 35 behind by 30
+
+  for(var i = 0; i < totalPlayers.length; i ++)
+  {
+    if(totalPlayers[i].totalPoints - totalPlayers[turn].totalPoints > 30 )
+    {
+      holdCondition = 34;
+    }
+  }
+
+  if(totalPlayers[turn].totalPoints >=50 && holdCondition < 34)
+  {
+    holdCondition = 17;
+  }
+
+
   do
   {
     var roboRoll = roll();
@@ -40,7 +60,7 @@ var hardRoll = function()
       currentpoints += roboRoll;
     }
   }
-  while(currentpoints <= 20);
+  while(currentpoints <= holdCondition);
   updateScore();
 }
 
@@ -77,8 +97,17 @@ var addRoll = function(roll){
       }
       else{
         turn ++;
+        currentpoints = 0;
+        while(totalPlayers[turn].isRobot)
+        {
+          //isGameOver();
+          if(totalPlayers[turn].isHard)
+            hardRoll();
+          else
+            easyRoll();
+        }
       }
-      currentpoints = 0;
+
     }
     else {
       currentpoints += roll;
@@ -108,6 +137,18 @@ var isGameOver =function(){
   }
 }
 
+var findLoser = function(playerArray){
+  var min = totalPlayers[0].totalPoints;
+  var index = 0;
+  for(var i =1; i<totalPlayers.length; i++){
+    if(min>totalPlayers[i].totalPoints){
+      min = totalPlayers[i].totalPoints;
+      index = i;
+    }
+  }
+  return index;
+}
+
 var resetGame= function(){
   totalPlayers.forEach(function(player){
     player.totalPoints =0;
@@ -127,11 +168,12 @@ $(document).ready(function() {
     $("#turn-total").text(currentpoints);
     totalPlayers.forEach(function(player){
       $("#output").append("<li>" + player.totalPoints + "</li>");
+      $("#roll").attr("disabled",false);
+      $("#hold").attr("disabled",false);
     });
   }
 
   var outputShow = function () {
-
     $("#output").empty();
     $("#turn-player").text(totalPlayers[turn].name);
     totalPlayers.forEach(function(player){
@@ -189,8 +231,14 @@ $(document).ready(function() {
         isGameOver();
         if(gameOver)
         {
+
+          var indexOfLoser = findLoser(totalPlayers);
+          console.log("Loser: "+ indexOfLoser);
           $("#player").text(totalPlayers[turn].name);
+          $("#loser").text(totalPlayers[indexOfLoser].name);
           $(".game-over").show();
+          $("#roll").attr("disabled",true);
+          $("#hold").attr("disabled",true);
           break;
         }
       //   $("#current").hide(); //hide the current roll view during play
@@ -202,6 +250,18 @@ $(document).ready(function() {
          //$("#current").show(); //hide the current roll during
       }
       isGameOver();
+      if(gameOver)
+      {
+        var indexOfLoser = findLoser(totalPlayers);
+        console.log("Loser: "+ indexOfLoser);
+        $("#player").text(totalPlayers[turn].name);
+        $("#loser").text(totalPlayers[indexOfLoser].name);
+
+
+        $(".game-over").show();
+        $("#roll").attr("disabled",true);
+        $("#hold").attr("disabled",true);
+      }
       $("#current-roll").text(rollCount);
       console.log(currentpoints)
       $("#turn-total").text(currentpoints);
@@ -226,12 +286,19 @@ $(document).ready(function() {
       }
 
       outputShow();
-      console.log("I GOT HERE");
+
       isGameOver();
       if(gameOver)
       {
+        var indexOfLoser = findLoser(totalPlayers);
+        console.log("Loser: "+ indexOfLoser);
         $("#player").text(totalPlayers[turn].name);
+        $("#loser").text(totalPlayers[indexOfLoser].name);
+
+
         $(".game-over").show();
+        $("#roll").attr("disabled",true);
+        $("#hold").attr("disabled",true);
         break;
       }
     }
@@ -241,8 +308,15 @@ $(document).ready(function() {
     //$("#turn-player").text(totalPlayers[turn].name);
     if(gameOver)
     {
+      var indexOfLoser = findLoser(totalPlayers);
+      console.log("Loser: "+ indexOfLoser);
       $("#player").text(totalPlayers[turn].name);
+      $("#loser").text(totalPlayers[indexOfLoser].name);
+
+
       $(".game-over").show();
+      $("#roll").attr("disabled",true);
+      $("#hold").attr("disabled",true);
     }
   });
   $("button.game-over").click(function(){

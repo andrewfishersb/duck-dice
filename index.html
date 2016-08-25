@@ -16,7 +16,6 @@
         <button type="button" class="btn btn-info" id="add">Add Player</button>
         <button type="button" class="btn btn-info" id="robot-easy">Add Easy Robot</button>
         <button type="button" class="btn btn-info" id="robot-hard">Add Hard Robot</button>
-        <button type="button" class="btn btn-success" id="start">Start</button>
       </div>
       <h3>Turn: <span id="turn-player"></script></h3>
       <div id="current">
@@ -30,11 +29,25 @@
 
 
       <ul id="output"></ul>
-      <div class="game-over">
-        <h2><span id="player"></span> Wins!</h2>
-        <img src="duck.gif">
+      <div class="row">
+        <div class="game-over col-md-6">
+          <h2><span id="player"></span> Wins!</h2>
+          <img src="duck.gif">
+
+        </div>
+
+          <div class="game-over col-md-6">
+            <h2><span id="loser"></span> Loses!</h2>
+            <img src="bear.gif">
+          </div>
+
+
+
       </div>
-      <button type="button" class="btn btn-danger game-over">Reset</button>
+      <div id="reset">
+        <button  type="button" class="btn btn-danger game-over">Reset</button>
+
+      </div>
 
     </div>
 
